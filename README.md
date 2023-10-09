@@ -13,3 +13,8 @@ Pour démarrer le serveur
 ```bash
 docker compose up -d
 ```
+
+Pour se connecter dans le docker
+```bash
+docker exec -it flask-docker bash
+```
