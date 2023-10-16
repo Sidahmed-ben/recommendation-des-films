@@ -4,6 +4,14 @@
 
 Ce projet implémente un système de recommandation de films basé sur l'apprentissage automatique. Il utilise l'IA pour offrir des recommandations de films personnalisées en fonction des préférences des utilisateurs. Ce README fournit un aperçu rapide des étapes et des composants clés du projet.
 
+## Membres de l'équipe 
+
+- BENAISSA Sidahmed 20012296
+- SAMMATRICE Lorenzo 22009074
+
+## Répartition de tâches :
+
+Lien Trello : 
 
 
 ## Commandes Docker
