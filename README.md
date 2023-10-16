@@ -22,3 +22,15 @@ Pour se connecter dans le docker
 ```bash
 docker exec -it flask-docker bash
 ```
+
+Une fois fini le développement pour mettre en production il faut build.
+```bash
+npm build
+```
+
+```bash
+npm install -g serve
+```
+```bash
+serve -s build
+```
