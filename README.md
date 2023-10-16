@@ -1,6 +1,10 @@
 # Recommendation des Films
 
-Website for movie recommandation created with react framework
+## Description
+
+Ce projet implémente un système de recommandation de films basé sur l'apprentissage automatique. Il utilise l'IA pour offrir des recommandations de films personnalisées en fonction des préférences des utilisateurs. Ce README fournit un aperçu rapide des étapes et des composants clés du projet.
+
+
 
 ## Commandes Docker
 
