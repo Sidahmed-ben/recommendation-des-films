@@ -27,7 +27,7 @@ function ResponsiveDrawer(props) {
     const drawer = (
         <div>
             <List>
-                <Typography align='center'>
+                <Typography textAlign={'center'}>
                     <h1>Recommandation Movies IA</h1>
                 </Typography>
                 <Box
@@ -108,7 +108,7 @@ function ResponsiveDrawer(props) {
 }
 
 ResponsiveDrawer.propTypes = {
-  window: PropTypes.func,
+    window: PropTypes.func,
 };
 
 export default ResponsiveDrawer;
