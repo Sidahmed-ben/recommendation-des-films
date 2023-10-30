@@ -1,0 +1,67 @@
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix vs: <http://www.w3.org/2003/06/sw-vocab-status/ns#> .
+@prefix o: <http://omeka.org/s/vocabs/o#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix mr: <https://movie-recommandation/onto/mr#> .
+@prefix ma: <http://www.w3.org/ns/ma-ont#>.
+
+<https://movie-recommandation/onto/mr#> a owl:Ontology ;
+    dcterms:title "Movie recommandation" .
+
+mr:User a rdfs:Class ;
+    rdfs:label "User" ;
+    rdfs:domain o:Resource ;
+    vs:term_status "experimental" .
+
+mr:MovieRecommanded a rdfs:Class ;
+    rdfs:label "MovieRecommanded" ;
+    rdfs:domain o:Resource ;
+    vs:term_status "experimental" .
+
+mr:MovieRating a rdfs:Class ;
+    rdfs:label "MovieRating" ;
+    rdfs:domain o:Resource ;
+    vs:term_status "experimental" .
+
+mr:Movie a rdfs:Class ;
+    rdfs:label "Movie" ;
+    rdfs:domain o:Resource ;
+    vs:term_status "experimental" .
+
+
+
+mr:username a rdf:Property ;
+    rdfs:label "username" ;
+    rdfs:domain o:Resource ;
+    vs:term_status "experimental" .
+
+mr:email a rdf:Property ;
+    rdfs:label "email" ;
+    rdfs:domain o:Resource ;
+    vs:term_status "experimental" .
+
+mr:hasUser a rdf:Property ;
+    rdfs:label "a comme utilisateur" ;
+    rdfs:domain o:Resource ;
+    vs:term_status "experimental" .
+
+mr:hasMovie a rdf:Property ;
+    rdfs:label "a comme film" ;
+    rdfs:domain o:Resource ;
+    vs:term_status "experimental" .
+
+mr:rating a rdf:Property ;
+    rdfs:label "rating" ;
+    rdfs:domain o:Resource ;
+    vs:term_status "experimental" .
+
+mr:title a rdf:Property ;
+    rdfs:label "title" ;
+    rdfs:domain o:Resource ;
+    vs:term_status "experimental" .
+
+
+    
