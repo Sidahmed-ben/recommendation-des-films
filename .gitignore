@@ -1,6 +1,7 @@
 /Back/data-films/
 
-
+.env
+/public/env.js
 # dependencies
 /node_modules
 /.pnp
