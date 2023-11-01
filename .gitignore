@@ -1,7 +1,7 @@
 /Back/data-films/
 
 .env
-/public/env.js
+/Front/movie-recommendation/public/env.js
 # dependencies
 /node_modules
 /.pnp
