@@ -15,7 +15,7 @@ Diagramme de Gaant : https://docs.google.com/spreadsheets/d/1oQpN8IbCruVLwIbYxTp
 
 
 ## Diagramme bas de données
-![bdd](https://github.com/Sidahmed-ben/recommendation-des-films/assets/90385023/045ff928-d5a3-47d1-a1dd-acd200c3e7be)<?xml version="1.0" standalone="no"?><svg version="1.1" 
+![bdd](https://github.com/Sidahmed-ben/recommendation-des-films/assets/90385023/045ff928-d5a3-47d1-a1dd-acd200c3e7be)
 
 
 ## Commandes Docker
