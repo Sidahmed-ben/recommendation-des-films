@@ -11,7 +11,11 @@ Ce projet implémente un système de recommandation de films basé sur l'apprent
 
 ## Répartition de tâches :
 
-Lien Trello : 
+Diagramme de Gaant : https://docs.google.com/spreadsheets/d/1oQpN8IbCruVLwIbYxTpXyGg-q9uK_OgEmNuSrVO-9V4/edit#gid=1115838130
+
+
+## Diagramme bas de données
+![Alt text]('./Base de données projet recommandation des films.png')
 
 
 ## Commandes Docker
