@@ -15,10 +15,9 @@ class TokenService:
 
     def init_routes(self):
         self.token_blueprint.route('/verify', methods=['POST'])(self.verify)
+        self.token_blueprint.route('/logout', methods=['POST'])(self.logout)
 
-    def verify(self) -> dict|None:
-        token: str = flask.request.get_json()['idToken']
-
+    def verify(self, token: str) -> dict|None:
         try:
             decoded_token = self.auth.verify_id_token(token)
 
@@ -36,4 +35,14 @@ class TokenService:
                 'error': 'An error occurred',
                 'message': str(e)
             }
+
+    def logout(self):
+        token_user: dict = flask.request.get_json()
+
+        decoded_token: dict = self.verify(token_user['idToken'])
+        user_id: str = decoded_token['decode']['user_id']
+
+        self.auth.revoke_refresh_tokens(user_id)
+
+        return flask.jsonify({'success': True}), 200
         

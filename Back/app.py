@@ -4,6 +4,7 @@ import pyrebase
 from dotenv import load_dotenv
 from fireabse_authentification import FirebaseAuthentification
 from token_service import TokenService
+from flask_cors import CORS
 
 if os.path.exists('.env.local'):
     load_dotenv('.env.local')
@@ -33,6 +34,11 @@ def home():
 
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
+
+    CORS(app, resources={r"/login": {"origins": os.getenv('URL_FRONT')}})
+    CORS(app, resources={r"/register": {"origins": os.getenv('URL_FRONT')}})
+    CORS(app, resources={r"/logout": {"origins": os.getenv('URL_FRONT')}})
+
     FirebaseAuthentification(app, firebase=firebase)
     TokenService(app=app)
     app.run(debug=True, host='0.0.0.0', port=port)
