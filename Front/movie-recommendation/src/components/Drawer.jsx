@@ -1,4 +1,5 @@
 import * as React from 'react'
+import Cookies from 'js-cookie'
 import PropTypes from 'prop-types'
 import AppBar from '@mui/material/AppBar'
 import Box from '@mui/material/Box'
@@ -13,10 +14,13 @@ import ListItemText from '@mui/material/ListItemText'
 import Typography from '@mui/material/Typography'
 import MovieFilterIcon from '@mui/icons-material/MovieFilter'
 // import LeaderboardIcon from '@mui/icons-material/Leaderboard'
+import ExitToAppIcon from '@mui/icons-material/ExitToApp'
 import { IconButton, Toolbar } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
 import HomeIcon from '@mui/icons-material/Home'
 import { Link } from 'react-router-dom'
+import env from 'react-dotenv'
+
 const drawerWidth = 240
 
 function ResponsiveDrawer (props) {
@@ -25,6 +29,18 @@ function ResponsiveDrawer (props) {
 
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen)
+    }
+
+    const logout = async () => {
+        const url = new URL('/logout', env.URL_API)
+        await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ idToken: Cookies.get('idToken') })
+        })
+        Cookies.remove('idToken')
     }
 
     const drawer = (
@@ -68,6 +84,19 @@ function ResponsiveDrawer (props) {
                 </Link> */}
             </List>
             <Divider />
+            {
+                Cookies.get('idToken')
+                    ? <Box>
+                        <Divider />
+                        <ListItemButton onClick={logout}>
+                            <ListItemIcon>
+                                <ExitToAppIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Se déconnecter" />
+                        </ListItemButton>
+                    </Box>
+                    : null
+            }
         </div>
     )
 
