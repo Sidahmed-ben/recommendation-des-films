@@ -10,12 +10,28 @@ import Container from '@mui/material/Container'
 import Copyright from './Copyright'
 import PropTypes from 'prop-types'
 import { useForm } from 'react-hook-form'
+import env from 'react-dotenv'
+import Cookies from 'js-cookie'
 
 export default function Login (props) {
     const { register, handleSubmit, formState: { errors } } = useForm()
-    const onSubmit = (data) => {
-        console.log(data)
-        // console.log(new FormData(data))
+    const onSubmit = async (formData) => {
+        const url = new URL('/login', env.URL_API)
+        const data = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        const dataUser = await data.json()
+
+        if (dataUser.success) {
+            const dateExpiration = new Date(dataUser.user.expiresIn)
+            Cookies.set('idToken', dataUser.user.idToken, { expires: dateExpiration })
+        } else {
+            alert('Vos identifiants sont incorrect')
+        }
     }
 
     return (
