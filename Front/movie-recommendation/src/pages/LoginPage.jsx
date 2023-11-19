@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Button from '@mui/material/Button'
 import CssBaseline from '@mui/material/CssBaseline'
 import TextField from '@mui/material/TextField'
@@ -7,32 +7,41 @@ import Grid from '@mui/material/Grid'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Container from '@mui/material/Container'
-import Copyright from './Copyright'
-import PropTypes from 'prop-types'
+import Copyright from '../components/Copyright'
 import { useForm } from 'react-hook-form'
-import env from 'react-dotenv'
 import Cookies from 'js-cookie'
+import { useNavigate } from 'react-router-dom'
+import { isLogged } from '../services/routageService'
+import { getUrl } from '../services/urlGeneratorService'
+import { fetchData } from '../services/apiService'
 
-export default function Login (props) {
+export default function LoginPage () {
+    const navigate = useNavigate()
     const { register, handleSubmit, formState: { errors } } = useForm()
     const onSubmit = async (formData) => {
-        const url = new URL('/login', env.URL_API)
-        const data = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(formData)
-        })
-        const dataUser = await data.json()
+        const url = getUrl('/login')
+        const getData = async () => {
+            const dataUser = await fetchData(url, JSON.stringify(formData), 'POST')
 
-        if (dataUser.success) {
-            const dateExpiration = new Date(dataUser.user.expiresIn)
-            Cookies.set('idToken', dataUser.user.idToken, { expires: dateExpiration })
-        } else {
-            alert('Vos identifiants sont incorrect')
+            if (dataUser.success) {
+                const expiresInInSeconds = dataUser.user.expiresIn
+                const dateExpiration = new Date()
+                dateExpiration.setTime(dateExpiration.getTime() + expiresInInSeconds * 1000)
+
+                Cookies.set('idToken', dataUser.user.idToken, { expires: dateExpiration })
+                navigate('/recommandation', { replace: true })
+            } else {
+                alert('Vos identifiants sont incorrect')
+            }
         }
+        getData()
     }
+
+    useEffect(() => {
+        if (isLogged()) {
+            navigate(-1)
+        }
+    })
 
     return (
         <Container component="main" maxWidth="xs">
@@ -83,7 +92,7 @@ export default function Login (props) {
                     </Button>
                     <Grid container>
                         <Grid item>
-                            <Link href="#" variant="body2" onClick={props.onToggleForm}>
+                            <Link href="/registration" variant="body2" to="/registration">
                                 {'Vous n\'avez pas de compte?'}
                             </Link>
                         </Grid>
@@ -93,8 +102,4 @@ export default function Login (props) {
             <Copyright sx={{ mt: 8, mb: 4 }} />
         </Container>
     )
-}
-
-Login.propTypes = {
-    onToggleForm: PropTypes.func.isRequired
 }

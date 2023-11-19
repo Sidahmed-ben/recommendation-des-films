@@ -45,4 +45,3 @@ class TokenService:
         self.auth.revoke_refresh_tokens(user_id)
 
         return flask.jsonify({'success': True}), 200
-        
