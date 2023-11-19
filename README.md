@@ -15,7 +15,7 @@ Diagramme de Gaant : https://docs.google.com/spreadsheets/d/1oQpN8IbCruVLwIbYxTp
 
 
 ## Diagramme bas de données
-![Alt text]('./Base de données projet recommandation des films.png')
+![bdd](https://github.com/Sidahmed-ben/recommendation-des-films/assets/90385023/045ff928-d5a3-47d1-a1dd-acd200c3e7be)
 
 
 ## Commandes Docker
