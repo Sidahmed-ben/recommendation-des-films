@@ -28,12 +28,12 @@ class FirebaseAuthentification:
         last_name: str = user_data['lastName']
 
         try:
+            username = first_name + ' ' + last_name
             user: dict = self.auth.create_user_with_email_and_password(email, password)
-            self.auth.update_profile(display_name=first_name + ' ' + last_name, id_token=user['idToken'])
+            self.auth.update_profile(display_name=username, id_token=user['idToken'])
 
             # Add user to database
             #  TO TEST
-            username = firstname+" "+lastname
             createUserDB(db,user,username,email)
             #//////////////////////////////// 
             content: dict = {
