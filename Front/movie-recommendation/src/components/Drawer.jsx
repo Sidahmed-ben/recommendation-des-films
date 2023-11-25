@@ -7,41 +7,40 @@ import CssBaseline from '@mui/material/CssBaseline'
 import Divider from '@mui/material/Divider'
 import Drawer from '@mui/material/Drawer'
 import List from '@mui/material/List'
-// import ListItem from '@mui/material/ListItem'
 import ListItemButton from '@mui/material/ListItemButton'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
 import Typography from '@mui/material/Typography'
 import MovieFilterIcon from '@mui/icons-material/MovieFilter'
-// import LeaderboardIcon from '@mui/icons-material/Leaderboard'
+import LeaderboardIcon from '@mui/icons-material/Leaderboard'
 import ExitToAppIcon from '@mui/icons-material/ExitToApp'
 import { IconButton, Toolbar } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
 import HomeIcon from '@mui/icons-material/Home'
-import { Link } from 'react-router-dom'
-import env from 'react-dotenv'
+import { Link, useNavigate } from 'react-router-dom'
+import { isLogged, logout } from '../services/routageService'
 
 const drawerWidth = 240
 
 function ResponsiveDrawer (props) {
     const { window } = props
     const [mobileOpen, setMobileOpen] = React.useState(false)
+    const navigate = useNavigate()
 
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen)
     }
-
-    const logout = async () => {
-        const url = new URL('/logout', env.URL_API)
-        await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ idToken: Cookies.get('idToken') })
-        })
-        Cookies.remove('idToken')
+    const logoutUser = async () => {
+        try {
+            await logout()
+            Cookies.remove('idToken')
+            navigate('/login')
+        } catch (error) {
+            console.error('Error fetching data:', error)
+        }
     }
+
+    const hasToken = isLogged()
 
     const drawer = (
         <div>
@@ -66,34 +65,36 @@ function ResponsiveDrawer (props) {
                         <ListItemText primary="Accueil" />
                     </ListItemButton>
                 </Link>
-                <Link to="/recommandation" style={{ textDecoration: 'none', color: 'inherit' }}>
+                <Link to={hasToken ? '/recommandation' : '/login'} style={{ textDecoration: 'none', color: 'inherit' }}>
                     <ListItemButton>
                         <ListItemIcon>
                             <MovieFilterIcon />
                         </ListItemIcon>
-                        <ListItemText primary="Recommandations Films" />
+                        <ListItemText primary='Recommandations Films' />
                     </ListItemButton>
                 </Link>
-                {/* <Link to="/films-note" style={{ textDecoration: 'none', color: 'inherit' }}>
+                <Link to={hasToken ? '/movie-rated' : '/login'} style={{ textDecoration: 'none', color: 'inherit' }}>
                     <ListItemButton>
                         <ListItemIcon>
                             <LeaderboardIcon/>
                         </ListItemIcon>
-                        <ListItemText primary="Recommandations Films" />
+                        <ListItemText primary="Films votés" />
                     </ListItemButton>
-                </Link> */}
+                </Link>
             </List>
             <Divider />
             {
                 Cookies.get('idToken')
                     ? <Box>
                         <Divider />
-                        <ListItemButton onClick={logout}>
-                            <ListItemIcon>
-                                <ExitToAppIcon />
-                            </ListItemIcon>
-                            <ListItemText primary="Se déconnecter" />
-                        </ListItemButton>
+                        <Link style={{ textDecoration: 'none', color: 'inherit' }}>
+                            <ListItemButton onClick={logoutUser}>
+                                <ListItemIcon>
+                                    <ExitToAppIcon />
+                                </ListItemIcon>
+                                <ListItemText primary="Se déconnecter" />
+                            </ListItemButton>
+                        </Link>
                     </Box>
                     : null
             }
