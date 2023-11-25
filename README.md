@@ -31,6 +31,11 @@ Pour démarrer le serveur
 ````bash
 docker compose up --build```
 
+### Cela permet de lancer et builder en même temps le docker
+```bash
+docker compose up --build
+```
+
 Pour se connecter dans le docker
 
 ```bash

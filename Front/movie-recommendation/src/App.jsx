@@ -4,6 +4,9 @@ import Grid from '@mui/material/Grid'
 import Home from './pages/HomePage'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import RecommendMoviesPage from './pages/RecommendMoviesPage'
+import LoginPage from './pages/LoginPage'
+import RegistrationPage from './pages/RegistrationPage'
+import RatingMoviesPage from './pages/RatingMoviePage'
 
 function HomePage () {
     let isPhone = false
@@ -22,7 +25,10 @@ function HomePage () {
                         <Grid item xs={9}>
                             <Routes>
                                 <Route path="/" index element={<Home/>} />
+                                <Route path="/login" element={<LoginPage />} />
                                 <Route path="/recommandation" element={<RecommendMoviesPage />} />
+                                <Route path="/registration" element={<RegistrationPage />} />
+                                <Route path="/movie-rated" element={<RatingMoviesPage />} />
                             </Routes>
                         </Grid>
                     </Grid>

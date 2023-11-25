@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React, { useEffect } from 'react'
 import Button from '@mui/material/Button'
 import CssBaseline from '@mui/material/CssBaseline'
 import TextField from '@mui/material/TextField'
@@ -7,15 +7,35 @@ import Grid from '@mui/material/Grid'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Container from '@mui/material/Container'
-import Copyright from './Copyright'
-import PropTypes from 'prop-types'
+import Copyright from '../components/Copyright'
 import { useForm } from 'react-hook-form'
+import { redirectToLoginIfIsConnected } from '../services/routageService'
+import { useNavigate } from 'react-router-dom'
+import { getUrl } from '../services/urlGeneratorService'
+import { fetchData } from '../services/apiService'
 
-export default function Registration (props) {
+export default function RegistrationPage () {
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        redirectToLoginIfIsConnected(navigate)
+    }, [])
+
     const { register, handleSubmit, formState: { errors } } = useForm()
-    const onSubmit = (data) => {
-        console.log(data)
-        // console.log(new FormData(data))
+    const onSubmit = (formData) => {
+        const url = getUrl('/register')
+        fetchData(url, JSON.stringify(formData), 'POST')
+            .then(dataUser => {
+                if (dataUser.success) {
+                    navigate('/login')
+                } else {
+                    alert(dataUser.message)
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error)
+                alert('Erreur serveur', error)
+            })
     }
 
     return (
@@ -98,7 +118,7 @@ export default function Registration (props) {
                     </Button>
                     <Grid container justifyContent="flex-end">
                         <Grid item>
-                            <Link href="#" variant="body2" onClick={props.onToggleForm}>
+                            <Link href="/login" variant="body2" to='/login'>
                                 Vous avez déjà un compte ? Connecte-vous
                             </Link>
                         </Grid>
@@ -108,8 +128,4 @@ export default function Registration (props) {
             <Copyright sx={{ mt: 5 }} />
         </Container>
     )
-}
-
-Registration.propTypes = {
-    onToggleForm: PropTypes.func.isRequired
 }
