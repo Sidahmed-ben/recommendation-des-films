@@ -1,7 +1,10 @@
 import flask
 import json
+from controllers.dbController import createUserDB
 import pyrebase
 from api_service import APIService
+from app import db
+
 
 class FirebaseAuthentification:
     def __init__(self, app: flask.Flask, firebase: pyrebase):
@@ -28,6 +31,11 @@ class FirebaseAuthentification:
             user: dict = self.auth.create_user_with_email_and_password(email, password)
             self.auth.update_profile(display_name=firstname + ' ' + lastname, id_token=user['idToken'])
 
+            # Add user to database
+            #  TO TEST
+            username = firstname+" "+lastname
+            createUserDB(db,user,username,email)
+            #//////////////////////////////// 
             content: dict = {
                 'success': True,
                 'user': user

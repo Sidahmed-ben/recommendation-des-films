@@ -5,8 +5,49 @@ services:
         container_name: flask-docker
         build:
             context: .
-            dockerfile: './Dockerfile'
-        ports: 
+            dockerfile: "./Dockerfile"
+        ports:
             - "5000:5000"
         volumes:
-            - './:/app'
+            - "./:/app"
+        links:
+            - database:database
+        networks:
+            - python
+
+    database:
+        container_name: database
+        image: mysql:latest
+        volumes:
+            - dbdata:/var/lib/mysql
+        restart: always
+        ports:
+            - "9906:3306"
+        environment:
+            MYSQL_ROOT_PASSWORD: password
+            MYSQL_DATABASE: movie_recommendation
+        networks:
+            - mysql-phpmyadmin
+            - python
+
+    # phpmyadmin
+    phpmyadmin:
+        depends_on:
+            - database
+        image: phpmyadmin
+        restart: always
+        ports:
+            - "8090:80"
+        environment:
+            PMA_HOST: database
+        networks:
+            - mysql-phpmyadmin
+
+networks:
+    python:
+    mysql-phpmyadmin:
+
+
+volumes:
+    dbdata:
+        driver: local
