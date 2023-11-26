@@ -17,8 +17,6 @@ else:
     load_dotenv()
 
 app = flask.Flask(__name__)
-# Configure the database connection
-"mysql://root:password@database:3306/"
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:password@database:3306/movie_recommendation'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -107,9 +105,10 @@ def indexMovies():
 
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
+    # print("os.getenv('URL_FRONT') ====>>>>  ",os.getenv('URL_FRONT'))
     CORS(app, resources={r"/login": {"origins": os.getenv('URL_FRONT')}})
     CORS(app, resources={r"/register": {"origins": os.getenv('URL_FRONT')}})
     CORS(app, resources={r"/logout": {"origins": os.getenv('URL_FRONT')}})
-    FirebaseAuthentification(app, firebase=firebase, db=db)
+    FirebaseAuthentification(app, firebase=firebase, db=db, userTable=user)
     TokenService(app=app)
-    app.run(debug=True, host='0.0.0.0', port=port)
+    app.run(debug=True, host='0.0.0.0', port=port) 
