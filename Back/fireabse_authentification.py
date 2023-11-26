@@ -1,19 +1,20 @@
 import flask
 import json
+from flask_sqlalchemy import SQLAlchemy
 from controllers.dbController import createUserDB
 import pyrebase
 from api_service import APIService
-from app import db
 
 
 class FirebaseAuthentification:
-    def __init__(self, app: flask.Flask, firebase: pyrebase):
+    def __init__(self, app: flask.Flask, firebase: pyrebase,db: SQLAlchemy):
         self.app = app
         self.auth = firebase.auth()
         self.api_service = APIService(app)
         self.auth_blueprint = flask.Blueprint('auth', __name__)
         self.init_routes()
         self.app.register_blueprint(self.auth_blueprint)
+        self.db = db
 
     def init_routes(self) -> None:
         self.auth_blueprint.route('/login', methods=['POST'])(self.login)
@@ -34,7 +35,7 @@ class FirebaseAuthentification:
 
             # Add user to database
             #  TO TEST
-            createUserDB(db,user,username,email)
+            createUserDB(self.db,user,username,email)
             #//////////////////////////////// 
             content: dict = {
                 'success': True,

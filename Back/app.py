@@ -64,6 +64,7 @@ class user(db.Model):
     email = db.Column(db.String(255))
 
 
+
 # Setup pyrebase
 def set_up_pyrebase():
     config = {
@@ -109,6 +110,6 @@ if __name__ == "__main__":
     CORS(app, resources={r"/login": {"origins": os.getenv('URL_FRONT')}})
     CORS(app, resources={r"/register": {"origins": os.getenv('URL_FRONT')}})
     CORS(app, resources={r"/logout": {"origins": os.getenv('URL_FRONT')}})
-    FirebaseAuthentification(app, firebase=firebase)
+    FirebaseAuthentification(app, firebase=firebase, db=db)
     TokenService(app=app)
     app.run(debug=True, host='0.0.0.0', port=port)
