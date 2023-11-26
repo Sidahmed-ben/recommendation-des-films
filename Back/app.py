@@ -84,11 +84,6 @@ def home():
     return '<h2>Hello from Flask & Docker</h2>'
 
 
-# @app.route('/create-user')
-# def createUser():
-#     createUserDB(db,user,username,email):
-#     return '<h2>User created succeffully</h2>'
-
 
 #  Create tables 
 @app.route('/create-tables')
