@@ -8,7 +8,7 @@ RUN python3 -m venv .venv \
 ENV PATH="/app/venv/bin:$PATH"
 
 RUN pip install --upgrade pip \
-    && pip install -r requirements.txt \
+    && pip install  --no-cache-dir -r requirements.txt \
     && pip install requests --upgrade \
     && pip cache purge
 
