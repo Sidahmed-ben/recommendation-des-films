@@ -1,9 +1,10 @@
 import React, { useContext, useEffect } from 'react'
 import GenresMovies from './Genres'
 import MovieContext from '../../MovieData'
-import { CircularProgress, Typography } from '@mui/material'
+import { Typography } from '@mui/material'
 import MovieCard from './MovieCard'
 import InfiniteScroll from 'react-infinite-scroll-component'
+import { LoaderComponent } from '../Loader'
 
 function Movies () {
     const {
@@ -42,7 +43,7 @@ function Movies () {
                                 setPage(page + 1)
                             }}
                             hasMore={page < totalPages}
-                            loader={<CircularProgress color="inherit" />}
+                            loader={<LoaderComponent />}
                             scrollThreshold={0.9}
                         >
                             {movies.map((movie, index) => (
@@ -50,7 +51,7 @@ function Movies () {
                             ))}
                         </InfiniteScroll>
                     </>
-                    : <CircularProgress color="inherit" />
+                    : <LoaderComponent />
             }
         </div>
     )
