@@ -1,4 +1,5 @@
 import env from 'react-dotenv'
+import Cookies from 'js-cookie'
 import { useNavigate } from 'react-router-dom'
 import React, { useEffect, useState } from 'react'
 import { redirectToLogin } from '../services/routageService'
@@ -57,7 +58,8 @@ export default function RecommendMoviesPage () {
         for (const movie of Object.keys(moviesToRecommend)) {
             const moviesToSend = {
                 id: moviesToRecommend[movie].idMovieBdd,
-                rateMovie: sliderValues[movie]
+                rateMovie: sliderValues[movie],
+                idToken: Cookies.get('idToken')
             }
             movies.push(moviesToSend)
         }
