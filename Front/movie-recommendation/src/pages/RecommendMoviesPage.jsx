@@ -34,8 +34,12 @@ export default function RecommendMoviesPage () {
             const movieData = await data.json()
 
             const results = movieData.results[0]
-            results.idMovieBdd = movie.id
-            moviesToShow.push(results)
+            if (results !== undefined) {
+                results.idMovieBdd = movie.id
+                moviesToShow.push(results)
+            } else {
+                location.reload()
+            }
         }
         setMoviesToRecommend(moviesToShow)
         setLoader(false)
@@ -57,8 +61,8 @@ export default function RecommendMoviesPage () {
         const movies = []
         for (const movie of Object.keys(moviesToRecommend)) {
             const moviesToSend = {
-                id: moviesToRecommend[movie].idMovieBdd,
-                rateMovie: sliderValues[movie],
+                movieId: moviesToRecommend[movie].idMovieBdd,
+                rating: sliderValues[movie],
                 idToken: Cookies.get('idToken')
             }
             movies.push(moviesToSend)
@@ -73,7 +77,7 @@ export default function RecommendMoviesPage () {
         }}>
             <Typography variant='h5' margin={10} sx={{ textAlign: 'center' }}>Recommandation Films</Typography>
             {
-                !loader
+                !loader && moviesToRecommend.length > 1
                     ? (
                         <Box sx={{
                             display: 'flex',
