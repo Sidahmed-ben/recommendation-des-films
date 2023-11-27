@@ -1,5 +1,6 @@
 import os
 import flask
+from sqlalchemy import func
 from controllers.dbController import  createTablesDB, indexMoviesDB
 import pyrebase
 from dotenv import load_dotenv
@@ -82,6 +83,15 @@ firebase = set_up_pyrebase()
 @app.route('/')
 def home():
     return '<h2>Hello from Flask & Docker</h2>'
+
+
+@app.route('/get-mov-to-recommend',methods=['GET'])
+def getMoviesToRecommend():
+    # Get 6 random rows from the database
+    random_rows = movieTable.query.order_by(func.random()).limit(6).all()
+    # Convert the results to a dictionary
+    result = [{'id': row.id, 'title': row.title } for row in random_rows]
+    return flask.jsonify(result)
 
 
 
