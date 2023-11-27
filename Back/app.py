@@ -10,6 +10,8 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 import pandas as pd
 from flask_sqlalchemy import SQLAlchemy
+import re
+import copy
 
 
 if os.path.exists('.env.local'):
@@ -89,9 +91,26 @@ def home():
 def getMoviesToRecommend():
     # Get 6 random rows from the database
     random_rows = movieTable.query.order_by(func.random()).limit(6).all()
+     # Use a regular expression to find the year within parentheses
+    movieRec = []
+    
     # Convert the results to a dictionary
-    result = [{'id': row.id, 'title': row.title } for row in random_rows]
-    return flask.jsonify(result)
+    for row in random_rows :
+        result = {}
+        result["id"] = row.id 
+        result['title'] =  row.title  
+        match = re.search(r'\((\d{4})\)', result['title'])
+        # Check if a match is found
+        if match:
+            year = match.group(1)
+            result["year"] = year
+            result["title"] = re.sub(r'\(\d{4}\)', '', result["title"]).strip()
+            # return int(year)
+        else:
+            result["year"] = 0
+        movieRec.append(result)
+            # return None  # Return None if no match is found
+    return flask.jsonify(movieRec)
 
 
 
