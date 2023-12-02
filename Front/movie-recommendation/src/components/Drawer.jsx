@@ -12,6 +12,7 @@ import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
 import Typography from '@mui/material/Typography'
 import MovieFilterIcon from '@mui/icons-material/MovieFilter'
+import MovieIcon from '@mui/icons-material/Movie'
 import LeaderboardIcon from '@mui/icons-material/Leaderboard'
 import ExitToAppIcon from '@mui/icons-material/ExitToApp'
 import { IconButton, Toolbar } from '@mui/material'
@@ -68,7 +69,7 @@ function ResponsiveDrawer (props) {
                 <Link to={hasToken ? '/recommandation' : '/login'} style={{ textDecoration: 'none', color: 'inherit' }}>
                     <ListItemButton>
                         <ListItemIcon>
-                            <MovieFilterIcon />
+                            <MovieIcon />
                         </ListItemIcon>
                         <ListItemText primary='Recommandations Films' />
                     </ListItemButton>
@@ -79,6 +80,14 @@ function ResponsiveDrawer (props) {
                             <LeaderboardIcon/>
                         </ListItemIcon>
                         <ListItemText primary="Films votés" />
+                    </ListItemButton>
+                </Link>
+                <Link to={hasToken ? '/movie-recommended' : '/login'} style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <ListItemButton>
+                        <ListItemIcon>
+                            <MovieFilterIcon/>
+                        </ListItemIcon>
+                        <ListItemText primary="Les films recommandés" />
                     </ListItemButton>
                 </Link>
             </List>

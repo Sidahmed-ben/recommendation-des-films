@@ -24,7 +24,7 @@ function MovieCard ({ movie }) {
             />
             <CardContent>
                 <Typography variant='h5' noWrap>{movie.title ?? movie.name}</Typography>
-                <Typography variant='h5'>{movie.vote_user ?? voteMovie}</Typography>
+                <Typography variant='h5'>{movie.voteUser ?? voteMovie}</Typography>
             </CardContent>
         </Card>
     )
@@ -38,7 +38,7 @@ MovieCard.propTypes = {
         title: PropTypes.string,
         name: PropTypes.string,
         vote_average: PropTypes.number,
-        vote_user: PropTypes.number
+        voteUser: PropTypes.number
     })
 }
 

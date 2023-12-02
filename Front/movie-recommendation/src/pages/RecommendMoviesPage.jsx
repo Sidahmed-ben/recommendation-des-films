@@ -1,9 +1,12 @@
 import env from 'react-dotenv'
+import Cookies from 'js-cookie'
 import { useNavigate } from 'react-router-dom'
 import React, { useEffect, useState } from 'react'
 import { redirectToLogin } from '../services/routageService'
 import MovieCard from '../components/Movie/MovieCard'
-import { Box, Button, CircularProgress, Container, Slider, Typography } from '@mui/material'
+import { Box, Button, Container, Slider, Typography } from '@mui/material'
+import { getUrl } from '../services/urlGeneratorService'
+import { LoaderComponent } from '../components/Loader'
 
 export default function RecommendMoviesPage () {
     const navigate = useNavigate()
@@ -19,41 +22,24 @@ export default function RecommendMoviesPage () {
     }
 
     const getMoviesToRecommend = async () => {
-        const movies = [
-            {
-                name_movie: 'The Fast and the Furious',
-                year_movie: '2001'
-            },
-            {
-                name_movie: 'Spiderman',
-                year_movie: '2004'
-            },
-            {
-                name_movie: 'Spiderman',
-                year_movie: '2008'
-            },
-            {
-                name_movie: 'Spiderman',
-                year_movie: '2022'
-            },
-            {
-                name_movie: 'Uncharted',
-                year_movie: '2022'
-            },
-            {
-                name_movie: 'Uncharted',
-                year_movie: '2022'
-            }
-        ]
+        const url = getUrl('/get-movie-to-recommend')
+        const data = await fetch(url)
+        const movies = await data.json()
 
         const moviesToShow = []
         for (const movie of movies) {
             const data = await fetch(
-                `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${movie.name_movie}&year=${movie.year_movie}`
+                `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${movie.title}&year=${movie.year}`
             )
             const movieData = await data.json()
 
-            moviesToShow.push(movieData.results[0])
+            const results = movieData.results[0]
+            if (results !== undefined) {
+                results.idMovieBdd = movie.id
+                moviesToShow.push(results)
+            } else {
+                location.reload()
+            }
         }
         setMoviesToRecommend(moviesToShow)
         setLoader(false)
@@ -75,9 +61,9 @@ export default function RecommendMoviesPage () {
         const movies = []
         for (const movie of Object.keys(moviesToRecommend)) {
             const moviesToSend = {
-                name_movie: moviesToRecommend[movie].title,
-                year_movie: moviesToRecommend[movie].release_date,
-                rateMovie: sliderValues[movie]
+                movieId: moviesToRecommend[movie].idMovieBdd,
+                rating: sliderValues[movie],
+                idToken: Cookies.get('idToken')
             }
             movies.push(moviesToSend)
         }
@@ -91,7 +77,7 @@ export default function RecommendMoviesPage () {
         }}>
             <Typography variant='h5' margin={10} sx={{ textAlign: 'center' }}>Recommandation Films</Typography>
             {
-                !loader
+                !loader && moviesToRecommend.length > 1
                     ? (
                         <Box sx={{
                             display: 'flex',
@@ -104,7 +90,7 @@ export default function RecommendMoviesPage () {
                                     containerStyle
                                 }}>
                                     <MovieCard movie={movie} />
-                                    <Box sx={{ width: 300, marginY: 2 }}>
+                                    <Box sx={{ width: 300, marginY: 2, marginX: 1 }}>
                                         <Typography variant='p' alignItems='center' textAlign='center'>Notez le film</Typography>
                                         <Slider
                                             getAriaLabel={() => `Vote du film ${index + 1}`}
@@ -114,6 +100,7 @@ export default function RecommendMoviesPage () {
                                             min={0}
                                             max={5}
                                             marks
+                                            sx={{ width: '90%' }}
                                         />
                                     </Box>
                                 </Box>
@@ -123,7 +110,7 @@ export default function RecommendMoviesPage () {
                             </Box>
                         </Box>
                     )
-                    : <CircularProgress color="inherit" />
+                    : <LoaderComponent />
             }
         </Container>
     )

@@ -64,8 +64,6 @@ class user(db.Model):
     username = db.Column(db.String(255))
     email = db.Column(db.String(255))
 
-
-
 # Setup pyrebase
 def set_up_pyrebase():
     config = {
@@ -87,52 +85,51 @@ def home():
     return '<h2>Hello from Flask & Docker</h2>'
 
 
-@app.route('/get-mov-to-recommend',methods=['GET'])
-def getMoviesToRecommend():
-    # Get 6 random rows from the database
+@app.route('/get-movie-to-recommend', methods=['GET'])
+def get_movies_to_recommend():
+    # Get 6 random: rows from the database
     random_rows = movieTable.query.order_by(func.random()).limit(6).all()
-     # Use a regular expression to find the year within parentheses
-    movieRec = []
-    
+    # Use a regular expression to find the year within parentheses
+    movie_rec: list = []
+
     # Convert the results to a dictionary
     for row in random_rows :
         result = {}
-        result["id"] = row.id 
+        result['id'] = row.id 
         result['title'] =  row.title  
         match = re.search(r'\((\d{4})\)', result['title'])
+
         # Check if a match is found
         if match:
             year = match.group(1)
-            result["year"] = year
-            result["title"] = re.sub(r'\(\d{4}\)', '', result["title"]).strip()
-            # return int(year)
+            result['year'] = year
+            result['title'] = re.sub(r'\(\d{4}\)', '', result['title']).strip()
         else:
-            result["year"] = 0
-        movieRec.append(result)
-            # return None  # Return None if no match is found
-    return flask.jsonify(movieRec)
-
+            result['year'] = 0
+        movie_rec.append(result)
+    return flask.jsonify(movie_rec)
 
 
 #  Create tables 
 @app.route('/create-tables')
-def createTables():
+def create_tables():
     createTablesDB(db,movieTable,movieRating,movieRecommended,user)
-    return '<h2>Tables created succeffully</h2>'
+    return '<h2>Tables created successfully</h2>'
 
 # Index movies using CSV movies file
 @app.route('/index-movies')
-def indexMovies():
+def index_movies():
     indexMoviesDB(movieTable)
-    return '<h2>Movie Table indexed succeffully</h2>'
+    return '<h2>Movie Table indexed successfully</h2>'
 
 
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
-    # print("os.getenv('URL_FRONT') ====>>>>  ",os.getenv('URL_FRONT'))
     CORS(app, resources={r"/login": {"origins": os.getenv('URL_FRONT')}})
     CORS(app, resources={r"/register": {"origins": os.getenv('URL_FRONT')}})
     CORS(app, resources={r"/logout": {"origins": os.getenv('URL_FRONT')}})
+    CORS(app, resources={r"/get-movie-to-recommend": {"origins": os.getenv('URL_FRONT')}})
+
     FirebaseAuthentification(app, firebase=firebase, db=db, userTable=user)
     TokenService(app=app)
     app.run(debug=True, host='0.0.0.0', port=port) 
