@@ -1,52 +1,27 @@
 import env from 'react-dotenv'
+import Cookies from 'js-cookie'
 import { useNavigate } from 'react-router-dom'
+import { fetchData } from '../services/apiService'
 import React, { useEffect, useState } from 'react'
-import { redirectToLogin } from '../services/routageService'
 import { Container, Typography } from '@mui/material'
-import MoviesPagination from '../components/Movie/MoviePagination'
 import { LoaderComponent } from '../components/Loader'
+import { getUrl } from '../services/urlGeneratorService'
+import { redirectToLogin } from '../services/routageService'
+import MoviesPagination from '../components/Movie/MoviePagination'
 
 export default function RecommendedMoviesByUserPage () {
     const navigate = useNavigate()
     const [moviesRecommended, setMoviesRecommended] = useState([])
     const [loader, setLoader] = useState(false)
     const apiKey = env.API_KEY
+    const idToken = Cookies.get('idToken')
 
     const getMoviesRecommended = async () => {
-        const movies = [
-            {
-                name_movie: 'The Fast and the Furious',
-                year_movie: '2001'
-            },
-            {
-                name_movie: 'Spiderman',
-                year_movie: '2004'
-            },
-            {
-                name_movie: 'Spiderman',
-                year_movie: '2008'
-            },
-            {
-                name_movie: 'Spiderman',
-                year_movie: '2022'
-            },
-            {
-                name_movie: 'Uncharted',
-                year_movie: '2022'
-            },
-            {
-                name_movie: 'Taxi 5',
-                year_movie: '2018'
-            },
-            {
-                name_movie: 'Uncharted',
-                year_movie: '2022'
-            },
-            {
-                name_movie: 'Taxi 5',
-                year_movie: '2018'
-            }
-        ]
+        const url = getUrl('/get-recommended-by-user')
+        const body = {
+            token: idToken
+        }
+        const movies = await fetchData(url, JSON.stringify(body), 'POST')
 
         const moviesToShow = []
         for (const movie of movies) {
@@ -63,14 +38,16 @@ export default function RecommendedMoviesByUserPage () {
 
     useEffect(() => {
         redirectToLogin(navigate)
-        getMoviesRecommended()
+        if (idToken) {
+            getMoviesRecommended()
+        }
     }, [])
 
     return (
         <Container sx={{
             alignItems: 'center'
         }}>
-            <Typography variant='h5' margin={10} sx={{ textAlign: 'center' }}>Recommandation Films</Typography>
+            <Typography variant='h5' margin={10} sx={{ textAlign: 'center' }}>Les films déjà recommandés</Typography>
             {
                 !loader && moviesRecommended.length > 1
                     ? (

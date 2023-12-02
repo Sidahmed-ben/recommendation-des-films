@@ -42,7 +42,7 @@ def get_model_input(movies_users,userRatings):
     user_ratings_list = [
         {
             'userId': '999',
-             'moviesRatings': userRatings
+            'moviesRatings': userRatings
         },
     ]
 

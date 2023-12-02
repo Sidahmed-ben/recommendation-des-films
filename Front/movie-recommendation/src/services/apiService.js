@@ -7,10 +7,10 @@
 export async function fetchData (url, bodyApi, methodApi) {
     const data = await fetch(url, {
         method: methodApi,
+        body: bodyApi,
         headers: {
             'Content-Type': 'application/json'
-        },
-        body: bodyApi
+        }
     })
 
     return data.json()
