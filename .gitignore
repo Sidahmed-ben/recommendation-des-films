@@ -1,6 +1,7 @@
 /Back/data-films/
 /Back/movies_dataset/
 
+
 .env
 /Front/movie-recommendation/public/env.js
 # dependencies
