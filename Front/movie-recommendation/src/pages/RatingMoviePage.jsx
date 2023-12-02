@@ -2,8 +2,8 @@ import env from 'react-dotenv'
 import { useNavigate } from 'react-router-dom'
 import React, { useEffect, useState } from 'react'
 import { redirectToLogin } from '../services/routageService'
-import MovieCard from '../components/Movie/MovieCard'
 import { Box, CircularProgress, Container, Typography } from '@mui/material'
+import MoviesPagination from '../components/Movie/MoviePagination'
 
 export default function RatingMoviesPage () {
     const navigate = useNavigate()
@@ -39,8 +39,8 @@ export default function RatingMoviesPage () {
                 vote_user: 5
             },
             {
-                name_movie: 'Uncharted',
-                year_movie: '2022',
+                name_movie: 'Taxi 5',
+                year_movie: '2018',
                 vote_user: 5
             }
         ]
@@ -65,35 +65,25 @@ export default function RatingMoviesPage () {
         getMovies()
     }, [])
 
-    const containerStyle = {
-        width: '100%',
-        display: 'flex',
-        flexWrap: 'wrap',
-        justifyContent: 'center'
-    }
-
     return (
         <Container sx={{
             alignItems: 'center'
         }}>
             <Typography variant='h5' margin={10} sx={{ textAlign: 'center' }}>Les films déjà votés</Typography>
             {
-                !loader
+                !loader && movies.length > 1
                     ? (
-                        <Box sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            flexWrap: 'wrap',
-                            justifyContent: 'center'
-                        }}>
-                            {movies.map((movie, index) => (
-                                <Box key={index} sx={{ containerStyle }}>
-                                    <MovieCard movie={movie} />
-                                </Box>
-                            ))}
-                        </Box>
+                        <MoviesPagination moviesToDisplay={movies} />
                     )
-                    : <CircularProgress color="inherit" />
+                    : <Box
+                        sx={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            marginTop: 2
+                        }}
+                    >
+                        <CircularProgress color="inherit" sx={{ alignContent: 'center' }} />
+                    </Box>
             }
         </Container>
     )

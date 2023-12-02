@@ -123,7 +123,6 @@ export class omk {
         page = 1;
       while (!fin) {
         data = syncRequest(url + page);
-        //console.log(url+page,data);
         fin = data.length ? false : true;
         rs = rs.concat(data);
         page++;
@@ -140,7 +139,6 @@ export class omk {
         page = 1;
       while (!fin) {
         data = syncRequest(url + page);
-        //console.log(url+page,data);
         fin = data.length ? false : true;
         rs = rs.concat(data);
         page++;
@@ -152,7 +150,6 @@ export class omk {
     this.searchItems = function (query, cb = false) {
       let url = me.api + "items?" + query,
         rs = syncRequest(url);
-      //console.log(url+page,data);
       if (cb) cb(rs);
       return rs;
     };

@@ -1,6 +1,5 @@
 import re
 
-
 def indexMoviesDB(movieTable):
     movieTable.create_from_csv('./movies_dataset/movies.csv')
 
@@ -21,7 +20,6 @@ def createUserDB(db,user,username,email):
     newUser = user(username=username,email=email)
     db.session.add(newUser)
     db.session.commit()
-
 
 
 def getMoviesIdDB(movieTable):# Use the query method to retrieve the movie with the specified ID
@@ -121,3 +119,4 @@ def getUserRecommendedMoviesDB(db,movieTable,movieRecommanded,user_id_value):
             rating_item["year"] = 0
         ratings_list.append(rating_item)
     return ratings_list
+
