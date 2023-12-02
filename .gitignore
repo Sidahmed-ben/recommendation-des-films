@@ -1,4 +1,6 @@
 /Back/data-films/
+/Back/movies_dataset/ratings.csv
+
 
 .env
 /Front/movie-recommendation/public/env.js

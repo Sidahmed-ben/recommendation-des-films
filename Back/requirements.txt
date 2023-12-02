@@ -10,3 +10,5 @@ Flask-SQLAlchemy==3.1.1
 flask-restx==1.2.0
 mysqlclient==2.2.0
 pandas
+tensorflow
+scikit-learn
