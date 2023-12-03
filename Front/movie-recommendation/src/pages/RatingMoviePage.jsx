@@ -1,6 +1,9 @@
 import env from 'react-dotenv'
+import Cookies from 'js-cookie'
 import { useNavigate } from 'react-router-dom'
 import React, { useEffect, useState } from 'react'
+import { fetchData } from '../services/apiService'
+import { getUrl } from '../services/urlGeneratorService'
 import { redirectToLogin } from '../services/routageService'
 import { Box, CircularProgress, Container, Typography } from '@mui/material'
 import MoviesPagination from '../components/Movie/MoviePagination'
@@ -10,50 +13,25 @@ export default function RatingMoviesPage () {
     const [movies, setMovies] = useState([])
     const [loader, setLoader] = useState(false)
     const apiKey = env.API_KEY
+    const idToken = Cookies.get('idToken')
 
     const getMovies = async () => {
-        const moviesRatedByUser = [
-            {
-                name_movie: 'The Fast and the Furious',
-                year_movie: '2001',
-                vote_user: 1
-            },
-            {
-                name_movie: 'Spiderman',
-                year_movie: '2004',
-                vote_user: 2
-            },
-            {
-                name_movie: 'Spiderman',
-                year_movie: '2008',
-                vote_user: 3
-            },
-            {
-                name_movie: 'Spiderman',
-                year_movie: '2022',
-                vote_user: 4
-            },
-            {
-                name_movie: 'Uncharted',
-                year_movie: '2022',
-                vote_user: 5
-            },
-            {
-                name_movie: 'Taxi 5',
-                year_movie: '2018',
-                vote_user: 5
-            }
-        ]
+        const url = getUrl('/get-user-ratings')
+        const body = {
+            token: idToken
+        }
+
+        const moviesRatedByUser = await fetchData(url, JSON.stringify(body), 'POST')
 
         const moviesToShow = []
         for (const movie of moviesRatedByUser) {
             const data = await fetch(
-                `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${movie.name_movie}&year=${movie.year_movie}`
+                `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${movie.title}&year=${movie.year}`
             )
             const movieData = await data.json()
 
             const results = movieData.results[0]
-            results.voteUser = movie.vote_user
+            results.voteUser = movie.rating
             moviesToShow.push(results)
         }
         setMovies(moviesToShow)
@@ -62,7 +40,9 @@ export default function RatingMoviesPage () {
 
     useEffect(() => {
         redirectToLogin(navigate)
-        getMovies()
+        if (idToken) {
+            getMovies()
+        }
     }, [])
 
     return (

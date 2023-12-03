@@ -1,9 +1,10 @@
+import re
 import os
 import random
 import flask
 from sqlalchemy import func
 import tensorflow as tf
-from controllers.learning import get_model_input, recommander_function
+from controllers.learning import recommander_function
 from controllers.dbController import  addUserRatingDB, addUserRecommendedDB, concatenateUserRatings, createTablesDB, getUserByEmail, getUserRatingsDB, getUserRecommendedMoviesDB, indexMoviesDB
 import pyrebase
 from dotenv import load_dotenv
@@ -14,14 +15,9 @@ from flask_sqlalchemy import SQLAlchemy
 from flask import request
 import pandas as pd
 from flask_sqlalchemy import SQLAlchemy
-import re
-import copy
 import pickle as pkl
-from sklearn.neighbors import KNeighborsClassifier
-from scipy.sparse import csr_matrix
 
 from sqlalchemy.orm import aliased
-
 
 
 if os.path.exists('.env.local'):
@@ -36,9 +32,10 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # Initialize the database connection
 db = SQLAlchemy(app)
 
+invalid_token_response = {"error": "Invalid token"}
 
 # Define tokenservice object 
-tokenservice = None  
+token_service = None  
 
 # Define movie table model
 class movieTable(db.Model):
@@ -78,11 +75,11 @@ class user(db.Model):
     email = db.Column(db.String(255))
 
 
-def saveModel(modelPath):
+def save_model(model_path):
     # Charger le modèle à partir du fichier
-    loaded_model = pkl.load(open(modelPath, 'rb'))
+    loaded_model = pkl.load(open(model_path, 'rb'))
     # Downloading our best model that was picked up by Model-Checkpoint
-    # best_model = tf.keras.models.load_model(modelPath)
+    # best_model = tf.keras.models.load_model(model_path)
     movies = pd.read_csv("./movies_dataset/movies.csv")
     ratings = pd.read_csv("./movies_dataset/ratings.csv")
     # Extract the movieIds from the movies DataFrame
@@ -92,7 +89,7 @@ def saveModel(modelPath):
     return loaded_model,movies,filtered_ratings
 
 # Download Model
-knnModel,movies,ratings = saveModel("./RecommandationAlgo/NearestNeighborsModel")
+knnModel,movies,ratings = save_model("./RecommandationAlgo/NearestNeighborsModel")
     
 # Setup pyrebase
 def set_up_pyrebase():
@@ -109,58 +106,58 @@ def set_up_pyrebase():
     return pyrebase.initialize_app(config)
 firebase = set_up_pyrebase()
 
-
-@app.route('/')
-def home():
-    return '<h2>Hello from Flask & Docker</h2>'
-
-@app.route('/get-user-ratings',methods=['POST'])
-def getUserRatings():
+@app.route('/get-user-ratings', methods=['POST'])
+def get_user_ratings():
     body = request.get_json()
     token = body["token"]
-    resp = tokenservice.verify(token)
+    resp = token_service.verify(token)
     if("decode" in resp and "email" in resp["decode"]):
         email = resp["decode"]["email"]
-        userData = getUserByEmail(user,email)
-        ratings_list = getUserRatingsDB(db,movieTable,movieRating,userData.id)
+        user_data = getUserByEmail(user,email)
+        ratings_list = getUserRatingsDB(db,movieTable,movieRating,user_data.id)
         return flask.jsonify(ratings_list)
 
     else:
-        return flask.jsonify({"error": "Invalid tooken"})
+        return flask.jsonify(invalid_token_response)
 
-@app.route('/get-recommended-by-user',methods=['POST'])
-def getRecommandedByUser():
+@app.route('/get-recommended-by-user', methods=['POST'])
+def get_recommanded_by_user():
     body = request.get_json()
     token = body["token"]
-    resp = tokenservice.verify(token)
+
+    resp = token_service.verify(token)
     if("decode" in resp and "email" in resp["decode"]):
         email = resp["decode"]["email"]
-        userData = getUserByEmail(user,email)
-        ratings_list = getUserRecommendedMoviesDB(db,movieTable,movieRecommended,userData.id)
+        user_data = getUserByEmail(user,email)
+        ratings_list = getUserRecommendedMoviesDB(db,movieTable,movieRecommended,user_data.id)
         return flask.jsonify(ratings_list)
     else:
-        return flask.jsonify({"error": "Invalid tooken"})
+        return flask.jsonify(invalid_token_response)
 
-@app.route('/get-mov-to-recommend',methods=['GET'])
-def getMoviesToRecommend():
+@app.route('/get-movies-to-recommend', methods=['POST'])
+def get_movies_to_recommend():
     body = request.get_json()
     token = body["token"]
-    resp = tokenservice.verify(token)
+
+    resp = token_service.verify(token)
+
     if("decode" in resp and "email" in resp["decode"]):
         email = resp["decode"]["email"]
-        userData = getUserByEmail(user,email)
+        user_data = getUserByEmail(user, email)
+
         # Create an alias for the movieRating table to avoid conflicts
         movie_rating_alias = aliased(movieRating)
         # Query for 50 random rows with selected columns, including movies the user has not rated
         random_rows = db.session.query(movieTable.id, movieTable.title).\
-        outerjoin(movie_rating_alias, (movieTable.id == movie_rating_alias.movie_id) & (movie_rating_alias.user_id == userData.id)).\
+        outerjoin(movie_rating_alias, (movieTable.id == movie_rating_alias.movie_id) & (movie_rating_alias.user_id == user_data.id)).\
         filter(movie_rating_alias.id == None).\
         order_by(func.random()).\
         limit(6).all()
         # Use a regular expression to find the year within parentheses
-        movieRec = []
+        movie_rec: list = []
         body = request.get_json()
         # Convert the results to a dictionary
+
         for row in random_rows :
             result = {}
             result["id"] = row.id 
@@ -171,32 +168,29 @@ def getMoviesToRecommend():
                 year = match.group(1)
                 result["year"] = year
                 result["title"] = re.sub(r'\(\d{4}\)', '', result["title"]).strip()
-                # return int(year)
             else:
                 result["year"] = 0
-            movieRec.append(result)
-                # return None  # Return None if no match is found
-        return flask.jsonify(movieRec)
+            movie_rec.append(result)
+
+        return flask.jsonify(movie_rec)
     else:
-        return flask.jsonify({"error": "Invalid tooken"})
+        return flask.jsonify(invalid_token_response)
 
 
-
-
-@app.route('/get-recommanded-mov',methods=['POST'])
-def getRecommandedMovies():
+@app.route('/get-recommanded-movies', methods=['POST'])
+def get_recommanded_movies():
     body = request.get_json()
     token = body["token"]
-    moviesRatings = body["moviesRatings"]
-    # print(moviesRatings)
-    resp = tokenservice.verify(token)
+    movies_ratings = body["moviesRatings"]
+
+    resp = token_service.verify(token)
     if("decode" in resp and "email" in resp["decode"]):
         email = resp["decode"]["email"]
-        userData = getUserByEmail(user,email)
-        for movieItem in moviesRatings:
-            addUserRatingDB(db,movieRating,userData.id,movieItem["movieId"],movieItem["rating"])
-        new_ratings = concatenateUserRatings(db,movieRating,userData.id,moviesRatings)
-        specific_movies_rows = recommander_function(50,knnModel,movies,ratings,userRatings=new_ratings)
+        user_data = getUserByEmail(user,email)
+        for movie_item in movies_ratings:
+            addUserRatingDB(db,movieRating,user_data.id,movie_item["movieId"],movie_item["rating"])
+        new_ratings = concatenateUserRatings(db,movieRating,user_data.id,movies_ratings)
+        specific_movies_rows = recommander_function(50, knnModel,movies,ratings, userRatings=new_ratings)
         df_list = specific_movies_rows.to_dict(orient='records')
         recommended_list = []
          # Convert the results to a dictionary
@@ -218,35 +212,11 @@ def getRecommandedMovies():
         random.shuffle(recommended_list)
         recommended_list = recommended_list[:10]
         for row in recommended_list :
-            addUserRecommendedDB(db,movieRecommended,userData.id,row['id'])
-        resp = tokenservice.verify(token)
+            addUserRecommendedDB(db,movieRecommended,user_data.id,row['id'])
+        resp = token_service.verify(token)
         return flask.jsonify(recommended_list)
     else:
-        return flask.jsonify({"error": "Invalid tooken"})
-
-@app.route('/get-movie-to-recommend', methods=['GET'])
-def get_movies_to_recommend():
-    # Get 6 random: rows from the database
-    random_rows = movieTable.query.order_by(func.random()).limit(6).all()
-    # Use a regular expression to find the year within parentheses
-    movie_rec: list = []
-
-    # Convert the results to a dictionary
-    for row in random_rows :
-        result = {}
-        result['id'] = row.id 
-        result['title'] =  row.title  
-        match = re.search(r'\((\d{4})\)', result['title'])
-
-        # Check if a match is found
-        if match:
-            year = match.group(1)
-            result['year'] = year
-            result['title'] = re.sub(r'\(\d{4}\)', '', result['title']).strip()
-        else:
-            result['year'] = 0
-        movie_rec.append(result)
-    return flask.jsonify(movie_rec)
+        return flask.jsonify(invalid_token_response)
 
 
 #  Create tables 
@@ -263,13 +233,15 @@ def index_movies():
 
 
 if __name__ == "__main__":
-    # global tokenservice
     port = int(os.environ.get('PORT', 5000))
     CORS(app, resources={r"/login": {"origins": os.getenv('URL_FRONT')}})
     CORS(app, resources={r"/register": {"origins": os.getenv('URL_FRONT')}})
     CORS(app, resources={r"/logout": {"origins": os.getenv('URL_FRONT')}})
-    CORS(app, resources={r"/get-movie-to-recommend": {"origins": os.getenv('URL_FRONT')}})
+    CORS(app, resources={r"/get-movies-to-recommend": {"origins": os.getenv('URL_FRONT')}})
+    CORS(app, resources={r"/get-user-ratings": {"origins": os.getenv('URL_FRONT')}})
+    CORS(app, resources={r"/get-recommanded-movies": {"origins": os.getenv('URL_FRONT')}})
+    CORS(app, resources={r"/get-recommended-by-user": {"origins": os.getenv('URL_FRONT')}})
 
     FirebaseAuthentification(app, firebase=firebase, db=db, userTable=user)
-    tokenservice = TokenService(app=app)
+    token_service = TokenService(app=app)
     app.run(debug=True, host='0.0.0.0', port=port) 
