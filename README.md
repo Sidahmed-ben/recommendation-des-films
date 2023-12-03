@@ -9,7 +9,7 @@ Ce projet implémente un système de recommandation de films basé sur l'apprent
 - BENAISSA Sidahmed 20012296
 - SAMMATRICE Lorenzo 22009074
 
-## Répartition de tâches :
+## Répartition des tâches :
 
 Diagramme de Gaant : https://docs.google.com/spreadsheets/d/1oQpN8IbCruVLwIbYxTpXyGg-q9uK_OgEmNuSrVO-9V4/edit#gid=1115838130
 
