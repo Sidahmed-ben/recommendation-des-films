@@ -19,7 +19,17 @@ Diagramme de Gaant : https://docs.google.com/spreadsheets/d/1oQpN8IbCruVLwIbYxTp
 
 ## Maquettes du site
 
-![bdd](https://github.com/Sidahmed-ben/recommendation-des-films/assets/90385023/045ff928-d5a3-47d1-a1dd-acd200c3e7be)
+### Page d'acceuil :
+![maquette](https://raw.githubusercontent.com/Sidahmed-ben/recommendation-des-films/main/maquette/PageAccueil.png)
+
+### Page films à recommander :
+![maquette](https://raw.githubusercontent.com/Sidahmed-ben/recommendation-des-films/main/maquette/FilmsRecommende.png))
+
+### Page films à voter :
+![maquette](https://raw.githubusercontent.com/Sidahmed-ben/recommendation-des-films/main/maquette/recommendationDesFilmVoter.png)
+
+
+
 
 ## Commandes Docker
 
