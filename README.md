@@ -13,22 +13,25 @@ Ce projet implémente un système de recommandation de films basé sur l'apprent
 
 Diagramme de Gaant : https://docs.google.com/spreadsheets/d/1oQpN8IbCruVLwIbYxTpXyGg-q9uK_OgEmNuSrVO-9V4/edit#gid=1115838130
 
+### Support de présentation
+https://www.canva.com/design/DAF1RuZEUrY/N5EHFHV6b74_rx6jWSe7PQ/edit?utm_content=DAF1RuZEUrY&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
+
+[Support de présentation en pdf](Oral%20projet%20recommendation%20des%20films.pdf)
+
 ## Diagramme bas de données
 
 ![bdd](https://github.com/Sidahmed-ben/recommendation-des-films/assets/90385023/045ff928-d5a3-47d1-a1dd-acd200c3e7be)
 
 ## Maquettes du site
 
-### Page d'acceuil :
+### Page d’accueil :
 ![maquette](https://raw.githubusercontent.com/Sidahmed-ben/recommendation-des-films/main/maquette/PageAccueil.png)
 
 ### Page films à recommander :
-![maquette](https://raw.githubusercontent.com/Sidahmed-ben/recommendation-des-films/main/maquette/FilmsRecommende.png))
+![maquette](https://raw.githubusercontent.com/Sidahmed-ben/recommendation-des-films/main/maquette/FilmsRecommende.png)
 
 ### Page films à voter :
 ![maquette](https://raw.githubusercontent.com/Sidahmed-ben/recommendation-des-films/main/maquette/recommendationDesFilmVoter.png)
-
-
 
 
 ## Commandes Docker
